@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Windows 11 Simulator - Fixed Icons</title>
+    <title>Interactive Windows 11 Simulator - Fixed Vectors</title>
     <style>
         * {
             box-sizing: border-box;
@@ -28,7 +28,7 @@
             position: relative;
         }
 
-        /* Draggable Orange Prompt Box */
+        /* Draggable Orange Prompt Box from your Image Reference image_9e1a63.jpg */
         #prompt-window {
             position: absolute;
             bottom: 20%;
@@ -88,7 +88,7 @@
             line-height: 1.4;
         }
 
-        /* Taskbar Configuration */
+        /* Taskbar Configuration Layout Frame */
         #taskbar {
             position: absolute;
             bottom: 0;
@@ -123,13 +123,15 @@
             align-items: center;
         }
 
-        /* Universal Icon Styling */
+        /* Robust Sizing Controls to stop browser collapsing icons */
         .icon {
             width: 40px;
             height: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            min-width: 40px;
+            min-height: 40px;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
             cursor: pointer;
             border-radius: 4px;
             transition: all 0.15s ease;
@@ -143,9 +145,13 @@
             transform: scale(0.90);
         }
 
+        /* Forcing explicit size dimensions for nested graphics elements */
         .icon svg, .icon img {
-            width: 24px;
-            height: 24px;
+            width: 24px !important;
+            height: 24px !important;
+            min-width: 24px !important;
+            min-height: 24px !important;
+            display: block !important;
         }
 
         .taskbar-right {
@@ -219,7 +225,7 @@
 
 <div id="desktop">
 
-    <!-- Draggable Prompt Window -->
+    <!-- Draggable Prompt Area Box Component -->
     <div id="prompt-window">
         <label>Ask a question to see where to click:</label>
         <div class="input-group">
@@ -234,10 +240,10 @@
     <div id="guidance-arrow"></div>
     <div id="faq-bubble"></div>
 
-    <!-- Realigned Windows 11 Taskbar Frame -->
+    <!-- Realigned Windows 11 Taskbar Frame Frame -->
     <div id="taskbar">
         
-        <!-- Left Zone: Weather -->
+        <!-- Left Zone: Weather Tracker System Display -->
         <div class="taskbar-left">
             <span class="weather-icon">⛅</span>
             <div>
@@ -246,43 +252,43 @@
             </div>
         </div>
 
-        <!-- Center Zone: Fully Hardcoded SVG App Icons -->
+        <!-- Center Zone: Explicit Core Visual Native Apps Assets -->
         <div class="taskbar-center">
             
-            <!-- 1. Start Button (Windows 11 Inline SVG) -->
+            <!-- 1. Start Menu Icon (Hard Forced Dimensions) -->
             <div class="icon" id="target-start" title="Start Menu">
-                <svg viewBox="0 0 23 23" fill="#00adef">
+                <svg width="24" height="24" viewBox="0 0 23 23" fill="#00adef">
                     <path d="M0 0h11.1v11.1H0zM11.9 0H23v11.1H11.9zM0 11.9h11.1V23H0zM11.9 11.9H23V23H11.9z"/>
                 </svg>
             </div>
 
-            <!-- 2. File Explorer (Custom Inline SVG Folder) -->
+            <!-- 2. File Explorer Folder Icon (Hard Forced Dimensions) -->
             <div class="icon" id="target-explorer" title="File Explorer">
-                <svg viewBox="0 0 24 24">
+                <svg width="24" height="24" viewBox="0 0 24 24">
                     <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z" fill="#ffca28"/>
                     <path d="M4 6h6l2 2h8V6H4z" fill="#ffa000"/>
                 </svg>
             </div>
 
-            <!-- 3. Google Chrome -->
+            <!-- 3. Google Chrome Browser Image -->
             <div class="icon" id="target-chrome" title="Google Chrome Browser">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Google_Chrome_icon_%28February_2022%29.svg" alt="Chrome">
             </div>
 
-            <!-- 4. Google Drive -->
+            <!-- 4. Google Drive Cloud Storage Image -->
             <div class="icon" id="target-drive" title="Google Drive">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg" alt="Drive">
             </div>
 
-            <!-- 5. Settings (Custom Inline SVG Gear) -->
+            <!-- 5. Settings Gear Wheel Icon (Hard Forced Dimensions) -->
             <div class="icon" id="target-settings" title="System Settings">
-                <svg viewBox="0 0 24 24" fill="#cccccc">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="#cccccc">
                     <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
                 </svg>
             </div>
         </div>
 
-        <!-- Right Zone: System Status -->
+        <!-- Right Zone: Calendar and Systems Connection Items Tray -->
         <div class="taskbar-right">
             <div class="system-indicators">
                 <span>🌐</span>
@@ -300,7 +306,7 @@
 </div>
 
 <script>
-    // Drag Logic
+    // Component Tracking Setup Control Logic
     const promptWindow = document.getElementById('prompt-window');
     let isDragging = false;
     let offsetX, offsetY;
@@ -322,7 +328,7 @@
 
     document.addEventListener('mouseup', () => { isDragging = false; });
 
-    // FAQ Engine Array Mapping
+    // FAQ Parsing Execution Database
     const faqDatabase = [
         {
             keywords: ['google', 'internet', 'website', 'chrome', 'go online', 'browser'],
@@ -422,7 +428,7 @@
         if (e.key === 'Enter') runSearchSimulation();
     });
 
-    // Simulated Clock
+    // Clock Execution Engine Loop
     function updateClock() {
         const now = new Date();
         let hours = now.getHours();
