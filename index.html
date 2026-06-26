@@ -59,7 +59,6 @@
         .icon:active { transform: scale(0.85); }
         .icon img, .icon svg { width: 24px; height: 24px; }
 
-        /* Windows 11 Open App Indicator Pill */
         .icon.active::after {
             content: '';
             position: absolute;
@@ -171,12 +170,10 @@
             color: white;
             z-index: 9000;
             overflow: hidden;
-            display: none; /* Hidden by default */
+            display: none;
         }
 
-        #window-explorer.open {
-            display: flex;
-        }
+        #window-explorer.open { display: flex; }
 
         .window-header {
             display: flex;
@@ -185,7 +182,7 @@
             padding: 0 0 0 15px;
             height: 40px;
             background: transparent;
-            cursor: move; /* Indicates it can be dragged */
+            cursor: move;
         }
 
         .window-title {
@@ -287,17 +284,244 @@
     
     <div class="window-body">
         <div class="sidebar">
-            <div class="sidebar-item active">🏠 Home</div>
-            <div class="sidebar-item">🖼️ Pictures</div>
-            <div class="sidebar-item">📄 Documents</div>
-            <div class="sidebar-item">⬇️ Downloads</div>
-            <div class="sidebar-item">🎵 Music</div>
-            <div class="sidebar-item" style="margin-top:20px;">💻 This PC</div>
-            <div class="sidebar-item">☁️ Network</div>
+            <div class="sidebar-item active" data-folder="Home">🏠 Home</div>
+            <div class="sidebar-item" data-folder="Pictures">🖼️ Pictures</div>
+            <div class="sidebar-item" data-folder="Documents">📄 Documents</div>
+            <div class="sidebar-item" data-folder="Downloads">⬇️ Downloads</div>
+            <div class="sidebar-item" data-folder="Music">🎵 Music</div>
         </div>
         <div class="main-content">
-            <div class="breadcrumb">Home > Quick Access</div>
-            <div class="file-grid">
-                <div class="file-item">
-                    <svg viewBox="0 0 24 24"><path fill="#FFD54F" d="M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"/><path fill="#F9A825" d="M4 6h6l2 2h8V6z"/></svg>
-                    <div>
+            <div class="breadcrumb" id="breadcrumb">
+                Home
+            </div>
+            <div class="file-grid" id="file-grid"></div>
+        </div>
+    </div>
+</div>
+
+<div id="start-menu" class="flyout">
+    <div class="start-search">Type here to search</div>
+    <div style="font-weight: 600; font-size: 14px; margin-top: 10px;">Pinned</div>
+</div>
+
+<div id="calendar-menu" class="flyout">
+    <div class="cal-header">
+        <div id="flyout-date" style="font-size: 18px; margin-bottom: 4px;"></div>
+        <div style="opacity: 0.7; font-weight: normal;">No new notifications</div>
+    </div>
+</div>
+
+<div class="taskbar">
+    <div></div>
+
+    <div class="taskbar-center">
+        <div class="icon start-btn" id="btn-start" title="Start">
+            <svg viewBox="0 0 23 23">
+                <path fill="#00ADEF" d="M0 0h11.1v11.1H0zM11.9 0H23v11.1H11.9zM0 11.9h11.1V23H0zM11.9 11.9H23V23H11.9z"/>
+            </svg>
+        </div>
+
+        <div class="icon" id="btn-taskbar-explorer" title="Explorer">
+            <svg viewBox="0 0 24 24">
+                <path fill="#FFD54F" d="M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"/>
+                <path fill="#F9A825" d="M4 6h6l2 2h8V6z"/>
+            </svg>
+        </div>
+
+        <div class="icon" title="Settings">
+            <svg viewBox="0 0 24 24">
+                <path fill="#d0d0d0" d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.06-.94l2.03-1.58-.12-.64-1.92-3.32-.6-.22-2.39.96a7.8 7.8 0 0 0-1.63-.94L14.4 2.8l-.49-.42h-3.82l-.49.42-.36 2.52a7.7 7.7 0 0 0-1.62.94l-2.4-.96-.59.22L2.7 8.84l.12.64 2.03 1.58a7.2 7.2 0 0 0 0 1.88L2.82 14.5l-.12.64 1.92 3.32.59.22 2.4-.96c.49.38 1.03.7 1.62.94l.36 2.52.49.42h3.82l.49-.42.36-2.52c.6-.24 1.14-.56 1.63-.94l2.39.96.6-.22 1.92-3.32-.12-.64-2.03-1.58c.04-.3.06-.61.06-.94zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"/>
+            </svg>
+        </div>
+    </div>
+
+    <div class="taskbar-right">
+        <div class="tray">▲</div>
+        <div class="tray">📶</div>
+        <div class="tray">🔊</div>
+        <div class="clock" id="btn-clock">
+            <div id="clockTime"></div>
+            <div id="clockDate"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// --- CLOCK LOGIC ---
+function updateClock(){
+    const now = new Date();
+    document.getElementById("clockTime").textContent = now.toLocaleTimeString("en-US",{ hour:"numeric", minute:"2-digit", hour12:true });
+    document.getElementById("clockDate").textContent = now.toLocaleDateString("en-US",{ month:"numeric", day:"numeric", year:"numeric" });
+    document.getElementById("flyout-date").textContent = now.toLocaleDateString("en-US",{ weekday:"long", month:"long", day:"numeric" });
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// --- MENU TOGGLES ---
+const startBtn = document.getElementById("btn-start");
+const startMenu = document.getElementById("start-menu");
+const clockBtn = document.getElementById("btn-clock");
+const calendarMenu = document.getElementById("calendar-menu");
+
+startBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    calendarMenu.classList.remove("show");
+    startMenu.classList.toggle("show");
+});
+
+clockBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    startMenu.classList.remove("show");
+    calendarMenu.classList.toggle("show");
+});
+
+document.addEventListener("click", (e) => {
+    if (!startMenu.contains(e.target) && !calendarMenu.contains(e.target)) {
+        startMenu.classList.remove("show");
+        calendarMenu.classList.remove("show");
+    }
+});
+
+startMenu.addEventListener("click", (e) => e.stopPropagation());
+calendarMenu.addEventListener("click", (e) => e.stopPropagation());
+
+// --- EXPLORER WINDOW LOGIC ---
+const taskbarExplorerBtn = document.getElementById("btn-taskbar-explorer");
+const explorerWindow = document.getElementById("window-explorer");
+const closeExplorerBtn = document.getElementById("btn-close-explorer");
+
+taskbarExplorerBtn.addEventListener("click", () => {
+    explorerWindow.classList.toggle("open");
+    taskbarExplorerBtn.classList.toggle("active");
+});
+
+closeExplorerBtn.addEventListener("click", () => {
+    explorerWindow.classList.remove("open");
+    taskbarExplorerBtn.classList.remove("active");
+});
+
+// --- DRAGGABLE WINDOW LOGIC ---
+const dragHeader = document.getElementById("explorer-header");
+let isDragging = false, dragOffsetX, dragOffsetY;
+
+dragHeader.addEventListener("mousedown", (e) => {
+    if (e.target.classList.contains("win-btn")) return;
+    isDragging = true;
+    dragOffsetX = e.clientX - explorerWindow.getBoundingClientRect().left;
+    dragOffsetY = e.clientY - explorerWindow.getBoundingClientRect().top;
+});
+
+document.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    explorerWindow.style.left = `${e.clientX - dragOffsetX}px`;
+    explorerWindow.style.top = `${e.clientY - dragOffsetY}px`;
+});
+
+document.addEventListener("mouseup", () => {
+    isDragging = false;
+});
+
+// ==========================================
+// --- NEW INTERACTIVE FILE SYSTEM LOGIC ----
+// ==========================================
+
+const fileSystem = {
+    Home: [
+        {type: "folder", name: "Projects"},
+        {type: "folder", name: "Taxes"},
+        {type: "file", name: "Resume.pdf"},
+        {type: "file", name: "Budget.xlsx"}
+    ],
+    Projects: [
+        {type: "file", name: "index.html"},
+        {type: "file", name: "app.js"},
+        {type: "file", name: "style.css"}
+    ],
+    Taxes: [
+        {type: "file", name: "w2.pdf"},
+        {type: "file", name: "1099.pdf"},
+        {type: "file", name: "receipts.zip"}
+    ],
+    Pictures: [
+        {type: "file", name: "vacation.jpg"},
+        {type: "file", name: "dog.png"},
+        {type: "file", name: "family.jpeg"}
+    ],
+    Documents: [
+        {type: "file", name: "report.docx"},
+        {type: "file", name: "notes.txt"}
+    ],
+    Downloads: [
+        {type: "file", name: "installer.exe"},
+        {type: "file", name: "archive.zip"}
+    ],
+    Music: [
+        {type: "file", name: "song.mp3"},
+        {type: "file", name: "album.zip"}
+    ]
+};
+
+let currentFolder = "Home";
+
+const grid = document.getElementById("file-grid");
+const breadcrumb = document.getElementById("breadcrumb");
+
+function folderIcon() {
+    return `
+    <svg viewBox="0 0 24 24">
+        <path fill="#FFD54F" d="M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"/>
+        <path fill="#F9A825" d="M4 6h6l2 2h8V6z"/>
+    </svg>
+    `;
+}
+
+function fileIcon() {
+    return `
+    <svg viewBox="0 0 24 24" fill="#4285F4">
+        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+    </svg>
+    `;
+}
+
+function openFolder(folder) {
+    currentFolder = folder;
+    breadcrumb.textContent = folder;
+    grid.innerHTML = "";
+
+    const items = fileSystem[folder] || [];
+
+    items.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "file-item";
+
+        div.innerHTML = `
+            ${item.type === "folder" ? folderIcon() : fileIcon()}
+            <div>${item.name}</div>
+        `;
+
+        div.onclick = () => {
+            if (item.type === "folder") {
+                openFolder(item.name);
+            } else {
+                alert("Opening " + item.name);
+            }
+        };
+
+        grid.appendChild(div);
+    });
+}
+
+openFolder("Home");
+
+// --- SIDEBAR NAVIGATION ---
+document.querySelectorAll(".sidebar-item").forEach(item => {
+    item.onclick = () => {
+        document.querySelectorAll(".sidebar-item").forEach(i => i.classList.remove("active"));
+        item.classList.add("active");
+        openFolder(item.dataset.folder);
+    };
+});
+
+</script>
+</body>
+</html>
