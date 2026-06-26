@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive PC Navigator Simulator - Plus & Google Edition</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #desktop {
+            width: 100%;
+            height: 100vh;
+            background-image: url('https://images.unsplash.com/photo-1620121692029-d088224ddc74?q=80&w=1920'); 
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        /* Draggable Orange Prompt Box */
+        #prompt-window {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 580px;
+            background-color: #ff5500; 
+            border: 2px solid #000;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 6px;
+            cursor: move;
+            z-index: 100;
+        }
+
+        #prompt-window label {
+            display: block;
+            color: #000;
+            font-size: 13px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        #question-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #000;
+            border-radius: 4px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        #ask-btn {
+            background-color: #d44500;
+            color: white;
+            border: 1px solid #000;
+            padding: 0 25px;
+            font-size: 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #ask-btn:hover {
+            background-color: #b33a00;
+        }
+
+        /* Suggestions Help Panel inside Prompt Box */
+        .suggestions {
+            margin-top: 10px;
+            font-size: 11px;
+            color: #222;
+            line-height: 1.4;
+        }
+
+        /* Mock Taskbar */
+        #taskbar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 48px;
+            background-color: rgba(32, 32, 32, 0.85);
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            border-top: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .taskbar-icons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            background-size: 70%;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .icon:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Custom SVG / Colors mimicking the apps */
+        .icon-start { background-color: #0078d4; background-image: url('https://upload.wikimedia.org/wikipedia/commons/8/87/Windows_logo_2012-2021.svg'); background-size: 50%; } 
+        .icon-explorer { background-color: #f1c40f; background-image: url('https://upload.wikimedia.org/wikipedia/commons/4/4e/Windows_File_Explorer_Icon.png'); } 
+        .icon-chrome { background-color: #ffffff; background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/Google_Chrome_icon_%28February_2022%29.svg'); }
+        .icon-drive { background-color: #ffffff; background-image: url('https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg'); }
+        .icon-settings { background-color: #555; background-image: url('https://upload.wikimedia.org/wikipedia/commons/6/6d/Windows_Settings_icon.svg'); }
+
+        /* Dynamic Guidance System */
+        #guidance-arrow {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid #ff5500;
+            filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.6));
+            display: none;
+            z-index: 99;
+            pointer-events: none;
+            animation: bounce 0.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-12px); }
+        }
+
+        /* Instructions Text Box (FAQ Output Modal) */
+        #faq-bubble {
+            position: absolute;
+            background: #ffffff;
+            color: #111111;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            display: none;
+            z-index: 101;
+            font-size: 13px;
+            max-width: 320px;
+            border-left: 5px solid #ff5500;
+        }
+
+        #faq-bubble h4 {
+            margin-bottom: 6px;
+            color: #0078d4;
+            font-size: 14px;
+        }
+        
+        #faq-bubble ol {
+            margin-left: 15px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="desktop">
+
+    <!-- Draggable Prompt Window Component -->
+    <div id="prompt-window">
+        <label>Ask a question to see where to click:</label>
+        <div class="input-group">
+            <input type="text" id="question-input" placeholder="e.g., How do I go to a website or search Google?" autocomplete="off">
+            <button id="ask-btn">Ask</button>
+        </div>
+        <div class="suggestions">
+            <strong>Try asking:</strong> "how to search google" • "where are my pictures" • "how to save to cloud drive" • "how to open start menu" • "how to open settings"
+        </div>
+    </div>
+
+    <!-- Live Indicators -->
+    <div id="guidance-arrow"></div>
+    <div id="faq-bubble"></div>
+
+    <!-- Taskbar UI Component -->
+    <div id="taskbar">
+        <div class="taskbar-icons">
+            <div class="icon icon-start" id="target-start" title="Windows Start Menu"></div>
+            <div class="icon icon-explorer" id="target-explorer" title="File Explorer (PC Files & Folders)"></div>
+            <div class="icon icon-chrome" id="target-chrome" title="Google Chrome (Internet Browser)"></div>
+            <div class="icon icon-drive" id="target-drive" title="Google Drive (Cloud Storage)"></div>
+            <div class="icon icon-settings" id="target-settings" title="Windows Settings"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // --- 1. DRAG LOGIC FOR PROMPT AREA ---
+    const promptWindow = document.getElementById('prompt-window');
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    promptWindow.addEventListener('mousedown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+        isDragging = true;
+        offsetX = e.clientX - promptWindow.getBoundingClientRect().left;
+        offsetY = e.clientY - promptWindow.getBoundingClientRect().top;
+        promptWindow.style.transform = 'none';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        promptWindow.style.left = `${e.clientX - offsetX}px`;
+        promptWindow.style.top = `${e.clientY - offsetY}px`;
+        promptWindow.style.bottom = 'auto';
+    });
+
+    document.addEventListener('mouseup', () => { isDragging = false; });
+
+
+    // --- 2. INTEGRATED FAQ DATABASE (MICROSOFT & GOOGLE CO-MAPPED) ---
+    const faqDatabase = [
+        {
+            keywords: ['google', 'internet', 'website', 'chrome', 'go online', 'browser'],
+            targetId: 'target-chrome',
+            title: 'Google Chrome FAQ: Browsing the Web',
+            steps: [
+                'Click the round **Google Chrome** icon on your taskbar.',
+                'Type a website address (like *google.com*) in the top bar.',
+                'Press **Enter** on your keyboard to navigate to the page.'
+            ]
+        },
+        {
+            keywords: ['drive', 'cloud', 'backup', 'save file online', 'google drive'],
+            targetId: 'target-drive',
+            title: 'Google Drive FAQ: Cloud Sync',
+            steps: [
+                'Click the **Google Drive** triangular icon.',
+                'Click the **"+" New** button inside the app window.',
+                'Select **File upload** to securely back up a desktop file online.'
+            ]
+        },
+        {
+            keywords: ['picture', 'file', 'folder', 'explorer', 'my documents', 'download'],
+            targetId: 'target-explorer',
+            title: 'Microsoft FAQ: Finding Your Files',
+            steps: [
+                'Click the yellow **File Explorer** folder icon.',
+                'Look at the left-side list menu.',
+                'Click **Pictures** or **Documents** to view your local files.'
+            ]
+        },
+        {
+            keywords: ['start', 'menu', 'turn off', 'shut down', 'restart', 'programs'],
+            targetId: 'target-start',
+            title: 'Microsoft FAQ: Windows Start Menu',
+            steps: [
+                'Click the **Windows Logo** icon in the center-left corner.',
+                'Review your pinned programs or search for an app.',
+                'Click the circular **Power symbol** to safely turn off the PC.'
+            ]
+        },
+        {
+            keywords: ['settings', 'control panel', 'setup', 'wifi', 'mouse', 'background'],
+            targetId: 'target-settings',
+            title: 'Microsoft FAQ: System Settings',
+            steps: [
+                'Click the grey **Gear Icon** (Settings).',
+                'Choose a category like **Network & Internet** or **Bluetooth & Devices**.',
+                'Adjust sliders to change volume, mouse speed, or change backgrounds.'
+            ]
+        }
+    ];
+
+
+    // --- 3. DYNAMIC SIMULATION LOGIC ---
+    const askBtn = document.getElementById('ask-btn');
+    const questionInput = document.getElementById('question-input');
+    const arrow = document.getElementById('guidance-arrow');
+    const faqBubble = document.getElementById('faq-bubble');
+
+    function runSearchSimulation() {
+        const query = questionInput.value.toLowerCase().trim();
+        
+        arrow.style.display = 'none';
+        faqBubble.style.display = 'none';
+
+        if (!query) return;
+
+        // Search through the consolidated knowledge bases
+        let matchedFaq = faqDatabase.find(item => 
+            item.keywords.some(keyword => query.includes(keyword))
+        );
+
+        if (matchedFaq) {
+            const targetElement = document.getElementById(matchedFaq.targetId);
+            const rect = targetElement.getBoundingClientRect();
+            
+            // Move guidance arrow over the taskbar app
+            arrow.style.left = `${rect.left + (rect.width / 2) - 20}px`;
+            arrow.style.top = `${rect.top - 50}px`;
+            arrow.style.display = 'block';
+
+            // Generate clean FAQ steps block 
+            let stepsHtml = `<ol>`;
+            matchedFaq.steps.forEach(step => {
+                // Formatting markdown-style bold flags safely
+                let cleanStep = step.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
+                stepsHtml += `<li>${cleanStep}</li>`;
+            });
+            stepsHtml += `</ol>`;
+
+            faqBubble.innerHTML = `<h4>${matchedFaq.title}</h4>${stepsHtml}`;
+            
+            // Position instruction modal clearly relative to the targeted app
+            faqBubble.style.left = `${Math.max(10, rect.left - 130)}px`;
+            faqBubble.style.top = `${rect.top - 175}px`;
+            faqBubble.style.display = 'block';
+        } else {
+            alert("No matching FAQ found. Try typing a key term like 'google', 'pictures', 'drive', or 'turn off'.");
+        }
+    }
+
+    askBtn.addEventListener('click', runSearchSimulation);
+    questionInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') runSearchSimulation();
+    });
+</script>
+
+</body>
+</html>
