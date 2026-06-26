@@ -1,33 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Windows 11 Taskbar</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#1b1b1b;
+    height:100vh;
+    overflow:hidden;
+    font-family:Segoe UI, sans-serif;
+}
+
+/* Desktop */
+.desktop{
+    width:100%;
+    height:100%;
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+}
+
+/* Taskbar */
+.taskbar{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    height:58px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:rgba(30,30,30,.78);
+    backdrop-filter:blur(20px);
+    border-top:1px solid rgba(255,255,255,.12);
+
+    z-index:999;
+}
+
+.taskbar-center{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.icon{
+    width:44px;
+    height:44px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    border-radius:8px;
+
+    transition:.18s;
+    cursor:pointer;
+}
+
+.icon:hover{
+    background:rgba(255,255,255,.15);
+}
+
+.icon img,
+.icon svg{
+    width:24px;
+    height:24px;
+}
+
+.icon:active{
+    transform:scale(.92);
+}
+</style>
+
+</head>
+<body>
+
+<div class="desktop"></div>
+
 <div class="taskbar">
+
     <div class="taskbar-center">
 
-        <div class="icon" id="target-start" title="Start">
-            <svg viewBox="0 0 23 23" width="24" height="24">
+        <!-- Windows Start -->
+        <div class="icon" title="Start Menu">
+
+            <svg viewBox="0 0 23 23">
+
                 <path fill="#00ADEF"
-                    d="M0 0h11.1v11.1H0zM11.9 0H23v11.1H11.9zM0 11.9h11.1V23H0zM11.9 11.9H23V23H11.9z"/>
+                d="M0 0h11.1v11.1H0z
+                   M11.9 0H23v11.1H11.9z
+                   M0 11.9h11.1V23H0z
+                   M11.9 11.9H23V23H11.9z"/>
+
             </svg>
+
         </div>
 
-        <div class="icon" id="target-explorer" title="File Explorer">
-            <svg viewBox="0 0 24 24" width="24" height="24">
-                <path fill="#FFCA28"
-                    d="M20 6h-8l-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2z"/>
-                <path fill="#FFA000"
-                    d="M4 6h6l2 2h8V6z"/>
+        <!-- Explorer -->
+
+        <div class="icon" title="File Explorer">
+
+            <svg viewBox="0 0 24 24">
+
+                <path fill="#FFD54F"
+                d="M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"/>
+
+                <path fill="#F9A825"
+                d="M4 6h6l2 2h8V6z"/>
+
             </svg>
+
         </div>
 
-        <div class="icon" id="target-chrome">
-            <img src="chrome.svg" alt="Chrome">
+        <!-- Chrome -->
+
+        <div class="icon" title="Google Chrome">
+
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Google_Chrome_icon_%28February_2022%29.svg">
+
         </div>
 
-        <div class="icon" id="target-drive">
-            <img src="drive.svg" alt="Drive">
+        <!-- Drive -->
+
+        <div class="icon" title="Google Drive">
+
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg">
+
         </div>
 
-        <div class="icon" id="target-settings">
-            <!-- settings svg -->
+        <!-- Settings -->
+
+        <div class="icon" title="Settings">
+
+            <svg viewBox="0 0 24 24">
+
+                <path fill="#d0d0d0"
+                d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.95 7.95 0 0 0-1.63-.94L14.4 2.8a.5.5 0 0 0-.49-.42h-3.82a.5.5 0 0 0-.49.42l-.36 2.52c-.58.24-1.12.56-1.62.94l-2.4-.96a.5.5 0 0 0-.59.22L2.7 8.84a.5.5 0 0 0 .12.64l2.03 1.58a7.1 7.1 0 0 0 0 1.88L2.82 14.5a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .59.22l2.4-.96c.49.38 1.03.7 1.62.94l.36 2.52a.5.5 0 0 0 .49.42h3.82a.5.5 0 0 0 .49-.42l.36-2.52c.6-.24 1.14-.56 1.63-.94l2.39.96a.5.5 0 0 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"/>
+
+            </svg>
+
         </div>
 
     </div>
+
 </div>
+
+</body>
+</html>
